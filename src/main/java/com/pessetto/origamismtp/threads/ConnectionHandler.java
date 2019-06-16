@@ -17,13 +17,16 @@ import com.pessetto.origamismtp.status.AuthStatus;
 public class ConnectionHandler implements Runnable {
 
 	private Socket connectionSocket;
-	
+	private String[] protocols;
+
 	/** Creates new instance of the ConnectionHandler on socket
 	 * @param connectionSocket The socket to use
+	 * @param protocols Secure TLS protocols to enable on the socket
 	 */
-	public ConnectionHandler(Socket connectionSocket)
+	public ConnectionHandler(Socket connectionSocket, String[] protocols)
 	{
 		this.connectionSocket = connectionSocket;
+		this.protocols = protocols;
 	}
 
 	/** Runs the connection in a new thread
@@ -77,7 +80,7 @@ public class ConnectionHandler implements Runnable {
 				}
 				else if(cmdId.equals("starttls"))
 				{
-					connectionSocket = commandHandler.handleSTARTTLS(connectionSocket);
+					connectionSocket = commandHandler.handleSTARTTLS(connectionSocket, protocols);
 					outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 					inFromClient = new Scanner(connectionSocket.getInputStream());
 					commandHandler.setInAndOutFromClient(inFromClient, outToClient);
